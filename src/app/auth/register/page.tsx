@@ -1,22 +1,11 @@
-import { paths } from "@/config/paths";
-import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import dynamic from "next/dynamic";
 
-const RegisterPage = () => {
-  const router = useRouter();
+const RegisterPage = dynamic(() => import("@/features/auth/register"), {
+  ssr: true,
+});
 
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams?.get("redirectTo");
-
-  return (
-    <RegisterForm
-      onSuccess={() =>
-        router.replace(
-          `${redirectTo ? `${decodeURIComponent(redirectTo)}` : paths.auth.login.getHref()}`,
-        )
-      }
-    />
-  );
+const ServerLoginPage = async () => {
+  return <RegisterPage />;
 };
 
-export default RegisterPage;
+export default ServerLoginPage;

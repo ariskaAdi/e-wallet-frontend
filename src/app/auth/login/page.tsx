@@ -1,22 +1,11 @@
-"use client";
+import dynamic from "next/dynamic";
 
-import { paths } from "@/config/paths";
-import { useRouter, useSearchParams } from "next/navigation";
+const LoginPage = dynamic(() => import("@/features/auth/login"), {
+  ssr: true,
+});
 
-const LoginPage = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams?.get("redirectTo");
-
-  return (
-    <LoginForm
-      onSuccess={() =>
-        router.replace(
-          `${redirectTo ? `${decodeURIComponent(redirectTo)}` : paths.dashboard.getHref()}`,
-        )
-      }
-    />
-  );
+const ServerLoginPage = async () => {
+  return <LoginPage />;
 };
 
-export default LoginPage;
+export default ServerLoginPage;
