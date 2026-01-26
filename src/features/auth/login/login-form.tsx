@@ -1,15 +1,64 @@
 "use client";
 
-import { useActionState } from "react";
+import React, { useState } from "react";
 import AuthLayout from "../auth-layout";
 import Link from "next/link";
 import InputForm from "@/components/ui/form/form";
 import InputPassword from "@/components/ui/form/form-password";
 import { Button } from "@/components/ui/button/button";
-import { loginAction } from "./action";
+import axios from "axios";
+import { envVars } from "@/config/env";
+import { loginSchema } from "@/lib/validation/auth";
+import { useRouter } from "next/navigation";
+import { FormLoginData } from "@/types/api";
 
 const Login = () => {
-  const [message, formAction, isPending] = useActionState(loginAction, null);
+  const [formData, setFormData] = useState<FormLoginData>({
+    email: "",
+    password: "",
+  });
+
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+
+    const parsed = loginSchema.safeParse(formData);
+    if (!parsed.success) {
+      setError(parsed.error.issues[0].message);
+      return;
+    }
+
+    setIsPending(true);
+
+    try {
+      await axios.post(`${envVars.API_URL}/auth/login`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.log(error);
+      setError("Invalid email or password");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
   return (
     <AuthLayout
       title="Login"
@@ -24,15 +73,15 @@ const Login = () => {
         </>
       }>
       {/* ERROR MESSSAGE */}
-      {message?.success === false && (
-        <p className="mb-3 text-red-500 text-center">{message?.message}</p>
-      )}
-      <form className="space-y-4" action={formAction}>
+      {error && <p className="mb-3 text-red-500 text-center">{error}</p>}
+      <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Email */}
         <InputForm
           id="email"
           name="email"
           placeholder="Enter your email"
+          value={formData.email}
+          onChange={handleInputChange}
           type="email">
           Email
         </InputForm>
@@ -41,7 +90,9 @@ const Login = () => {
         <InputPassword
           id="password"
           name="password"
+          value={formData.password}
           placeholder="Enter your password"
+          onChange={handleInputChange}
           type="password">
           Password
         </InputPassword>

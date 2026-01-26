@@ -1,22 +1,18 @@
-export type BaseEntity = {
-  id: string;
-  createdAt: number;
+export type FormLoginData = {
+  email: string;
+  password: string;
 };
 
-export type Entity<T> = {
-  [K in keyof T]: T[K];
-} & BaseEntity;
-
-export type User = Entity<{
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: "ADMIN" | "USER";
-  teamId: string;
-  bio: string;
-}>;
-
-export type AuthResponse = {
-  jwt: string;
-  userPublicId: User;
+export type MyWalletResponse = {
+  HttpCode: number;
+  success: boolean;
+  message: string;
+  payload: {
+    user_public_id: string;
+    wallet_public_id: string;
+    name: string;
+    balance: number;
+    created_at: string;
+    updated_at: string;
+  };
 };

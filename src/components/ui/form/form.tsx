@@ -11,6 +11,7 @@ interface InputFormProps extends React.ComponentPropsWithoutRef<"div"> {
   type: InputProps["type"];
   name?: InputProps["name"];
   placeholder?: InputProps["placeholder"];
+  value?: InputProps["value"];
 }
 
 const InputForm = ({
@@ -19,13 +20,14 @@ const InputForm = ({
   type,
   name,
   placeholder,
+  value,
   children,
   ...props
 }: InputFormProps) => {
   const defaultClassName = "flex flex-col gap-2";
   const finalClassName = className ? className : defaultClassName;
 
-  const inputProps = { id, type, name, placeholder, ...props };
+  const inputProps = { id, type, name, placeholder, value, ...props };
   return (
     <div className={finalClassName}>
       <Label htmlFor={id}>{children}</Label>

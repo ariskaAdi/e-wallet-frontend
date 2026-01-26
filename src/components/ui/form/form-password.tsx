@@ -13,6 +13,7 @@ interface InputPasswordProps extends React.ComponentPropsWithoutRef<"div"> {
   type: InputProps["type"];
   name?: InputProps["name"];
   placeholder?: InputProps["placeholder"];
+  value: InputProps["value"];
 }
 
 const InputPassword = ({
@@ -21,6 +22,7 @@ const InputPassword = ({
   type,
   name,
   placeholder,
+  value,
   children,
   ...props
 }: InputPasswordProps) => {
@@ -28,7 +30,7 @@ const InputPassword = ({
   const defaultClassName = "flex-col";
   const finalClassName = className ? className : defaultClassName;
 
-  const inputProps = { id, type, name, placeholder, ...props };
+  const inputProps = { id, type, name, placeholder, value, ...props };
   return (
     <div className={finalClassName}>
       <Label htmlFor={id}>{children}</Label>
